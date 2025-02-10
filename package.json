@@ -2,6 +2,10 @@
   "repository": "https://github.com/vercel/examples.git",
   "license": "MIT",
   "private": true,
+  "engines": {
+    "npm": ">=10.0.0 <11.0.0",
+    "node": ">=20.0.0 <21.0.0"
+  },
   "scripts": {
     "format": "prettier --write \"src/**/*.js\"",
     "lint": "npx eslint \"{src,apps,libs,test}/**/*.js\" --fix",
