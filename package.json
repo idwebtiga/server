@@ -2,9 +2,31 @@
   "repository": "https://github.com/vercel/examples.git",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "format": "prettier --write \"src/**/*.js\"",
+    "lint": "npx eslint \"{src,apps,libs,test}/**/*.js\" --fix",
+    "dev": "node src/localhost.js"
+  },
   "devDependencies": {
-    "@types/node": "^17.0.42",
+    "@eslint/js": "^9.20.0",
     "@vercel/node": "^2.9.6",
-    "typescript": "^4.7.3"
+    "eslint": "^9.20.0",
+    "globals": "^15.14.0",
+    "prettier": "3.4.2",
+    "sequelize-cli": "^6.6.2"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "express": "^4.21.2",
+    "jwt-simple": "^0.5.6",
+    "moment": "^2.30.1",
+    "mysql2": "^2.2.5",
+    "pg": "^8.13.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.5",
+    "siwe": "^3.0.0"
   }
 }
