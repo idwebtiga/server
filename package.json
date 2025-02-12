@@ -9,7 +9,8 @@
   "scripts": {
     "format": "prettier --write \"src/**/*.js\"",
     "lint": "npx eslint \"{src,apps,libs,test}/**/*.js\" --fix",
-    "dev": "node src/localhost.js"
+    "dev": "node src/localhost.js",
+    "sync": "node src/syncdb.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",

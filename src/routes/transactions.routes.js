@@ -5,6 +5,9 @@ module.exports = (app) => {
   const router = require('express').Router();
 
   router.post('/buyToken', transactions.buyToken);
+  router.post('/sellToken', transactions.sellToken);
+  router.post('/takeLoan', transactions.takeLoan);
+  router.post('/payLoan', transactions.payLoan);
 
   app.use('/api/transactions', checkHeaderToken, router);
 };

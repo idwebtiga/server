@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 app.get('/', (req, res) => {
-  res.send('v1.0.0');
+  res.send('v1.0.1');
 });
 
 require('./routes/messages.routes')(app);

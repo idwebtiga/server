@@ -26,15 +26,6 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.STRING,
         allowNull: true,
       },
-      mintDate: {
-        type: Sequelize.DATE,
-        allowNull: true,
-      },
-      minted: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false,
-      },
       txHash: {
         type: Sequelize.STRING,
         allowNull: true,
@@ -42,6 +33,15 @@ module.exports = (sequelize, Sequelize) => {
       errMsg: {
         type: Sequelize.STRING,
         allowNull: true,
+      },
+      processDate: {
+        type: Sequelize.DATE,
+        allowNull: true,
+      },
+      processed: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
     },
     {},
