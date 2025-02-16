@@ -14,6 +14,7 @@ db.sequelize = sequelize;
 
 // const Op = db.Sequelize.Op;
 
+db.payments = require('./payments.models.js')(sequelize, Sequelize);
 db.transactions = require('./transactions.models.js')(sequelize, Sequelize);
 db.topups = require('./topups.models.js')(sequelize, Sequelize);
 db.users = require('./users.models.js')(sequelize, Sequelize);

@@ -34,11 +34,14 @@ async function create(req, res) {
     });
 
     if (pending) throw new Error('there is pending topup');
-    if (amount < TOPUP_MINIMUM || amount > TOPUP_MAXIMUM)
+    const validAmount = amount >= TOPUP_MINIMUM && amount <= TOPUP_MAXIMUM;
+    if (!validAmount)
       throw new Error('invalid amount');
     const check = Math.floor(amount / 1000) * 1000;
-    if (amount !== check)
+    if (amount + '' !== check + '') {
+      console.log({ amount, check });
       throw new Error('invalid amount: not multiplier of 1000');
+    }
 
     let goodUniqueCode = 0;
 
@@ -46,7 +49,7 @@ async function create(req, res) {
       const uc = Math.floor(Math.random() * 998) + 1;
       const tm = await db.topups.findOne({
         where: {
-          uniqueCode: check,
+          uniqueCode: uc,
           confirmed: false,
           cancelled: false,
         },
@@ -90,6 +93,7 @@ async function create(req, res) {
     const resp = await db.topups.findOne({ where: { id: topupId } });
     return res.status(200).send(resp);
   } catch (err) {
+    console.error(err);
     const errMsg = err.message || 'unknown error';
     return res.status(500).send({
       message: errMsg,

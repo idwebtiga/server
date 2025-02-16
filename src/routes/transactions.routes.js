@@ -8,6 +8,7 @@ module.exports = (app) => {
   router.post('/sellToken', transactions.sellToken);
   router.post('/takeLoan', transactions.takeLoan);
   router.post('/payLoan', transactions.payLoan);
+  router.post('/payWithNotes', transactions.payWithNotes);
 
   app.use('/api/transactions', checkHeaderToken, router);
 };

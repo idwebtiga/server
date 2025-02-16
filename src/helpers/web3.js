@@ -9,12 +9,12 @@ const { Contract, ethers, parseEther } = ethersv6;
 
 const CONFIG = {
   deployer: '0x8AdF8d3DB777c4d69728F34B8B581Cb862CEc6D5',
-  configAddress: '0x52A1476eC247d9fED7E25f64Ac1e7F13582817C5',
-  daoAddress: '0x49498c6c32424F272586ceD1F0Cd6898729A7c14',
-  zilAddress: '0xee282946E4A04122a5aA2342f837f5B330EFD971',
-  coinAddress: '0x97e479a958A7439Cfebe1962b314110CEFE8D556',
-  tokenAddress: '0xb503eB26aD5931F77eE6cc0ca3aEaD1d9c439482',
-  delegatorAddress: '0x0711aa52a48a595f2527728C641cca5334B3904C',
+  configAddress: '0xe2bEA18841532DdcAF771761517e457F9E435126',
+  daoAddress: '0x5B8DaD9049cba9974a1F5F767364F1d908241140',
+  zilAddress: '0x9aaa754d0189A2bf8186BdB53E4Dcac3794FCB89',
+  coinAddress: '0xb7778651cE199cb097C1db42990D11335d56c402',
+  tokenAddress: '0x7D235728338994BeF942b1514aEbd2b76f3a6CCE',
+  delegatorAddress: '0xFeCD3c19480999EE38A65460476889176374DC79',
   rpcUrl: 'https://evmtestnet.confluxrpc.com',
   chainId: 71,
   gasSymbol: 'ETH',
@@ -161,10 +161,31 @@ async function payLoan(args) {
   return ret;
 }
 
+async function payWithNotes(args) {
+  console.log('payWithNotes');
+  const { toAddress, notes, amountCoin, fee, nonce, signature, signer } = args;
+  const { delegator } = getContracts();
+  const ret = {};
+  try {
+    const tx = await delegator.TransferForRequest(
+      toAddress, notes, amountCoin, fee, nonce, signature, signer
+    );
+    const txHash = tx.hash;
+    ret.txHash = txHash;
+  } catch (err) {
+    console.error(err);
+    const errMsg = err && err.message ? err.message : JSON.stringify(err);
+    ret.errMsg = errMsg;
+  }
+  console.log(ret);
+  return ret;
+}
+
 module.exports = {
   mintCoin,
   buyToken,
   sellToken,
   takeLoan,
   payLoan,
+  payWithNotes
 };

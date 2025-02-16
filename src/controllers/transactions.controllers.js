@@ -2,6 +2,9 @@
 const db = require('../models');
 const moment = require('moment');
 const web3 = require('../helpers/web3');
+const config = require('../helpers/config');
+
+const { ADMIN_ADDRESS } = config;
 
 async function validateParams(userId, signer, signature) {
   const user = await db.users.findOne({ where: { id: userId } });
@@ -148,9 +151,57 @@ async function payLoan(req, res) {
   }
 }
 
+async function payWithNotes(req, res) {
+  try {
+    const userId = req.userId;
+    let { toAddress, notes, amountCoin, fee, nonce, signature, signer } = req.body;
+
+    toAddress = toAddress.toLowerCase();
+    if (toAddress !== ADMIN_ADDRESS.toLowerCase()) throw new Error('invalid toAddress');
+
+    signer = signer.toLowerCase();
+    const payload = {
+      toAddress, notes, amountCoin, fee, nonce, signature, signer
+    };
+
+    const check = await db.payments.findOne({
+      where: { requestId: notes, userId, fromAddress: signer, burned: false }
+    });
+
+    if (!check) throw new Error('payment not found');
+
+    const amountAsked = check.amount + '000000000000000000';
+    if (amountCoin !== amountAsked) throw new Error('invalid amountCoin');
+
+    await validateParams(userId, signer, signature);
+    const result = await web3.payWithNotes(payload);
+
+    const resp = await processTransaction(userId, nonce, 'payWithNotes',
+      payload, signer, signature, result.txHash, result.errMsg);
+
+    await db.payments.update({
+      burnDate: moment().toDate(),
+      burned: true,
+      txHash: result.txHash,
+      errMsg: result.errMsg
+    }, { where: { requestId } });
+
+    const respPayment = await db.payments.findOne({ where: { requestId } });
+    resp.payment = respPayment;
+
+    return res.status(200).send(resp);
+  } catch (err) {
+    const errMsg = err.message || 'unknown error';
+    return res.status(500).send({
+      message: errMsg,
+    });
+  }
+}
+
 module.exports = {
   buyToken,
   sellToken,
   takeLoan,
-  payLoan
+  payLoan,
+  payWithNotes
 };
