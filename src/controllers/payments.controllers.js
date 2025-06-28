@@ -2,11 +2,11 @@ const { getPagination, getPagingData } = require('../helpers/pagination');
 const db = require('../models');
 const moment = require('moment');
 const config = require('../helpers/config');
-
+const { validatePhoneNumber } = require('../helpers/utils');
 // const Op = db.Sequelize.Op;
 // const sequelize = require('sequelize');
 
-const { PAYMENT_FEE } = config;
+// const { PAYMENT_FEE } = config;
 
 // userId: {
 // requestId: {
@@ -40,8 +40,10 @@ async function findItems(req, res) {
 
 async function create(req, res) {
   try {
-    let { itemId, fromAddress } = req.body;
+    let { receiver, itemId, fromAddress } = req.body;
 
+    // validate receiver as phoneNum
+    if (!validatePhoneNumber(receiver)) throw new Error('Nomor penerima tidak tepat.')
     fromAddress = fromAddress.toLowerCase();
     itemId = Number(itemId);
 
@@ -69,6 +71,7 @@ async function create(req, res) {
       userId,
       nameItem: item.nameItem,
       amount: item.amount,
+      receiver,
       fromAddress,
     };
 
@@ -107,14 +110,37 @@ async function findMe(req, res) {
     const {
       page,
       size,
+      sortby,
+      sortdir
       // , from, to, sortby, sortdir, searchvalue
     } = req.query;
     const { limit } = getPagination(page, size);
+    let order = [['createdAt', 'DESC']];
+    if ((sortby !== undefined) || (sortdir !== undefined)) {
+
+      let sortcolumn = 'createdAt';
+      if (sortby) sortcolumn = sortby;
+
+      let dir = "DESC";
+      if (typeof sortdir !== 'undefined') {
+        if (sortdir.toLowerCase() == 'asc') {
+          dir = "ASC";
+        }
+      }
+
+      order = [[sortcolumn, dir]];
+      if (sortcolumn.indexOf('.') >= 0) {
+        const arr = sortby.split('.');
+        arr.push(dir);
+        order = [arr];
+      }
+    }
+
     const userId = req.userId;
     const where = {
       userId,
     };
-    const data = await db.payments.findAndCountAll({ where });
+    const data = await db.payments.findAndCountAll({ where, order });
     const response = getPagingData(data, page, limit);
     return res.status(200).send(response);
   } catch (err) {

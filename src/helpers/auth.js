@@ -12,7 +12,6 @@ function checkHeaderToken(req, res, next) {
 
     // token = token.replace(/[\W_]+/g, '');
 
-    console.log({ token });
     if (token && token.length > 0) {
       try {
         const decoded = jwt.decode(token, process.env.JWT_SECRET);

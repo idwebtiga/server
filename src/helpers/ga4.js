@@ -53,42 +53,26 @@ function logReqRes(req, res, next) {
             clientId = req.cookies._ga.substring(6);
         }
 
-        const eventName = ('' + req.method + '' + req.baseUrl).replaceAll('/', '_').toLowerCase();
+        const eventName = ('' + req.method + '' + req.baseUrl + '' + req.path).replaceAll('/', '_').toLowerCase();
         const toLog = {
-            // time: moment().format(),
-            // fromIP: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
             clientIP: req.clientIP,
-            // protocol: req.protocol,
-            // method: req.method,
             originalUrl: req.originalUrl,
-            // url: req.url,
             hostname: req.hostname,
-            // baseUrl: req.baseUrl,
-            statusCode: res.statusCode,
-            // query: req.query,
-            // params: req.params,
-            // headers: req.headers,
-            // body: req.body,
-            // responseData: body,
-            // referer: req.headers.referer || '',
-            // ua: req.headers['user-agent']
+            statusCode: res.statusCode
         };
 
         if (toLog && toLog.headers) {
             const h = toLog.headers;
-            if (h.authorization) h.authorization = 'xxx';
-            if (h.Authorization) h.Authorization = 'xxx';
+            if (h.authorization) h.authorization = '***';
+            if (h.Authorization) h.Authorization = '***';
             toLog.headers = h;
         }
 
         const endTimeMS = moment().valueOf();
         const diffTimeMS = endTimeMS - startTimeMS;
-        // toLog.startTimeMS = startTimeMS;
-        // toLog.endTimeMS = endTimeMS;
         toLog.diffTimeMS = diffTimeMS;
 
-        console.log(toLog);
-        notifyGA4(clientId, eventName, toLog);
+        // notifyGA4(clientId, eventName, toLog);
         oldEnd.apply(res, restArgs);
     };
 

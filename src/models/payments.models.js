@@ -8,7 +8,7 @@ module.exports = (sequelize, Sequelize) => {
       },
       requestId: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       nameItem: {
         type: Sequelize.STRING,

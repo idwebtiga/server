@@ -106,14 +106,38 @@ async function findMe(req, res) {
     const {
       page,
       size,
+      sortby,
+      sortdir
       // , from, to, sortby, sortdir, searchvalue
     } = req.query;
     const { limit } = getPagination(page, size);
+
+    let order = [['createdAt', 'DESC']];
+    if ((sortby !== undefined) || (sortdir !== undefined)) {
+
+      let sortcolumn = 'createdAt';
+      if (sortby) sortcolumn = sortby;
+
+      let dir = "DESC";
+      if (typeof sortdir !== 'undefined') {
+        if (sortdir.toLowerCase() == 'asc') {
+          dir = "ASC";
+        }
+      }
+
+      order = [[sortcolumn, dir]];
+      if (sortcolumn.indexOf('.') >= 0) {
+        const arr = sortby.split('.');
+        arr.push(dir);
+        order = [arr];
+      }
+    }
+
     const userId = req.userId;
     const where = {
       userId,
     };
-    const data = await db.topups.findAndCountAll({ where });
+    const data = await db.topups.findAndCountAll({ where, order });
     const response = getPagingData(data, page, limit);
     return res.status(200).send(response);
   } catch (err) {

@@ -4,6 +4,6 @@ const port = process.env.PORT | 3000;
 const { setAdminPassword } = require('./controllers/users.controllers.js');
 
 app.listen(port, async () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Localhost app listening on port ${port}`);
   await setAdminPassword(process.env.ADMIN_PASSWORD);
 });

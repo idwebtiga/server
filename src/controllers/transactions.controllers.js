@@ -155,6 +155,7 @@ async function payWithNotes(req, res) {
   try {
     const userId = req.userId;
     let { toAddress, notes, amountCoin, fee, nonce, signature, signer } = req.body;
+    const requestId = notes;
 
     toAddress = toAddress.toLowerCase();
     if (toAddress !== ADMIN_ADDRESS.toLowerCase()) throw new Error('invalid toAddress');
@@ -165,7 +166,7 @@ async function payWithNotes(req, res) {
     };
 
     const check = await db.payments.findOne({
-      where: { requestId: notes, userId, fromAddress: signer, burned: false }
+      where: { requestId, userId, fromAddress: signer, transfered: false }
     });
 
     if (!check) throw new Error('payment not found');
@@ -180,8 +181,8 @@ async function payWithNotes(req, res) {
       payload, signer, signature, result.txHash, result.errMsg);
 
     await db.payments.update({
-      burnDate: moment().toDate(),
-      burned: true,
+      transfer: true,
+      transferDate: moment().toDate(),
       txHash: result.txHash,
       errMsg: result.errMsg
     }, { where: { requestId } });
